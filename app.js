@@ -1,12 +1,14 @@
-const express    = require('express'),
-      bodyParser = require('body-parser'),
-      mongoose   = require('mongoose'),
-      app        = express()
+const express         = require('express'),
+      bodyParser      = require('body-parser'),
+      methodOverride  = require('method-override'),
+      mongoose        = require('mongoose'),
+      app             = express()
 //App Config
 mongoose.connect('mongodb://noor:noor@ds119223.mlab.com:19223/restfulblogapp')
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(methodOverride("_method"))
 
 //Mongoose Model Config
 var blogSchema = new mongoose.Schema({
@@ -59,6 +61,41 @@ app.get('/blogs/:id', (req, res) => {
         res.render('show', {blog: foundBlog})
     }
   })
+})
+
+//Edit Route
+app.get('/blogs/:id/edit', (req, res) => {
+  Blog.findById(req.params.id, (err, foundBlog) => {
+    if (err) {
+      res.redirect('/blogs')
+    } else {
+      res.render('edit', {blog: foundBlog})
+    }
+  })
+})
+
+//Update Route
+app.put('/blogs/:id', (req, res) => {
+  Blog.findByIdAndUpdate(req.params.id, req.body.blog, (err, updatedBlog) => {
+    if (err) {
+      res.redirect('/blogs/')
+    } else {
+      res.redirect('/blogs/' + req.params.id)
+    }
+  })
+})
+
+//Delete Route
+app.delete('/blogs/:id', (req, res) => {
+  //Destroy blog
+  Blog.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      res.redirect('/blogs')
+    } else {
+      res.redirect('/blogs')
+    }
+  })
+  //redirect somewhere
 })
 
 app.listen(3000, () => {

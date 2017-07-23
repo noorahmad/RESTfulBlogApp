@@ -9,7 +9,11 @@
       <span><%=blog.created.toDateString()%></span>
     </div>
     <div class="description">
-      <p><%-blog.body%></p>
+      <p><%- blog.body %></p>
+      <a class="ui green inverted button" id="delete" href="/blogs/<%= blog._id %>/edit">Edit</a>
+      <form class="" action="/blogs/<%= blog._id %>?_method=DELETE" method="post">
+        <button class="ui red inverted button">DELETE</button>
+      </form>
     </div>
   </div>
 </div>
